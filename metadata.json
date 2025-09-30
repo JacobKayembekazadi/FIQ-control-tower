@@ -1,0 +1,5 @@
+{
+  "name": "FIQ Supply Chain Control Tower",
+  "description": "An AI-powered dashboard for supply chain innovators to upload, visualize, and analyze their data. Features proactive risk alerts, an AI analyst chatbot, and key performance indicator tracking.",
+  "requestFramePermissions": []
+}
