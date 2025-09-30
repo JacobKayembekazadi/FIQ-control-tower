@@ -2,31 +2,94 @@
 import { GoogleGenAI } from "@google/genai";
 import { processDataForDashboard } from "../utils/dataProcessor";
 
-// Handle environment variables for both development and production
-const API_KEY = (import.meta as any).env?.VITE_GEMINI_API_KEY || 
-                (globalThis as any).process?.env?.GEMINI_API_KEY ||
-                (window as any).VITE_GEMINI_API_KEY;
+// --- API KEY HANDLING -------------------------------------------------------
+// We support three sources (in priority order):
+// 1. Runtime override stored in localStorage (user-entered in UI)
+// 2. Vite-exposed environment variable (build time) VITE_GEMINI_API_KEY
+// 3. Legacy process.env / window shim (development fallbacks)
 
-// Initialize GoogleGenAI only if API key is available
+const LOCAL_STORAGE_KEY = 'fiq_gemini_api_key';
+
+function readLocalStorageKey(): string | null {
+  try {
+    return typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
+  } catch {
+    return null;
+  }
+}
+
+let runtimeApiKey: string | null = readLocalStorageKey();
+
+const buildTimeKey = (import.meta as any).env?.VITE_GEMINI_API_KEY ||
+  (globalThis as any).process?.env?.VITE_GEMINI_API_KEY ||
+  (globalThis as any).process?.env?.GEMINI_API_KEY ||
+  (window as any).VITE_GEMINI_API_KEY;
+
+function resolveApiKey(): string | null {
+  return runtimeApiKey || buildTimeKey || null;
+}
+
 let ai: GoogleGenAI | null = null;
 
-if (API_KEY) {
-  try {
-    ai = new GoogleGenAI({ apiKey: API_KEY });
-  } catch (error) {
-    console.error("Failed to initialize Google GenAI:", error);
+function initClient() {
+  const key = resolveApiKey();
+  if (!key) {
+    ai = null;
+    return;
   }
-} else {
-  console.warn("Gemini API key not found. AI features will be disabled. Set VITE_GEMINI_API_KEY in your environment.");
+  try {
+    ai = new GoogleGenAI({ apiKey: key });
+  } catch (err) {
+    console.error('Failed to initialize Google GenAI client', err);
+    ai = null;
+  }
+}
+
+initClient();
+
+export function isAiEnabled(): boolean {
+  return !!ai && !!resolveApiKey();
+}
+
+export function getActiveApiKeySource(): 'runtime' | 'build' | 'none' {
+  if (runtimeApiKey) return 'runtime';
+  if (buildTimeKey) return 'build';
+  return 'none';
+}
+
+export function setRuntimeApiKey(key: string): { success: boolean; message: string } {
+  if (!key || key.trim().length < 10) {
+    return { success: false, message: 'API key appears invalid (too short).' };
+  }
+  try {
+    runtimeApiKey = key.trim();
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(LOCAL_STORAGE_KEY, runtimeApiKey);
+    }
+    initClient();
+    if (!ai) {
+      return { success: false, message: 'Failed to initialize AI client with provided key.' };
+    }
+    return { success: true, message: 'API key saved for this browser.' };
+  } catch (e) {
+    console.error('Failed to set runtime API key', e);
+    return { success: false, message: 'Unexpected error storing key.' };
+  }
+}
+
+export function clearRuntimeApiKey() {
+  runtimeApiKey = null;
+  try { if (typeof window !== 'undefined') localStorage.removeItem(LOCAL_STORAGE_KEY); } catch {}
+  initClient();
 }
 
 export const callGeminiApi = async (systemInstruction: string, userQuery: string): Promise<string> => {
-  if (!API_KEY || !ai) {
+  if (!isAiEnabled()) {
     return Promise.resolve("AI functionality is disabled. API key is missing or invalid.");
   }
   
   try {
-    const response = await ai.models.generateContent({
+    const response = await ai!.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: [
         { role: 'user', parts: [{ text: `SYSTEM INSTRUCTION:\n${systemInstruction}` }] },
