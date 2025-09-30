@@ -2,19 +2,27 @@
 import { GoogleGenAI } from "@google/genai";
 import { processDataForDashboard } from "../utils/dataProcessor";
 
-const API_KEY = process.env.GEMINI_API_KEY;
+// Handle environment variables for both development and production
+const API_KEY = (import.meta as any).env?.VITE_GEMINI_API_KEY || 
+                (globalThis as any).process?.env?.GEMINI_API_KEY ||
+                (window as any).VITE_GEMINI_API_KEY;
 
-if (!API_KEY) {
-  // In a real app, you'd want to handle this more gracefully.
-  // For this environment, we'll log a warning.
-  console.warn("Gemini API key not found in environment variables. AI features will not work.");
+// Initialize GoogleGenAI only if API key is available
+let ai: GoogleGenAI | null = null;
+
+if (API_KEY) {
+  try {
+    ai = new GoogleGenAI({ apiKey: API_KEY });
+  } catch (error) {
+    console.error("Failed to initialize Google GenAI:", error);
+  }
+} else {
+  console.warn("Gemini API key not found. AI features will be disabled. Set VITE_GEMINI_API_KEY in your environment.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
-
 export const callGeminiApi = async (systemInstruction: string, userQuery: string): Promise<string> => {
-  if (!API_KEY) {
-    return Promise.resolve("AI functionality is disabled. API key is missing.");
+  if (!API_KEY || !ai) {
+    return Promise.resolve("AI functionality is disabled. API key is missing or invalid.");
   }
   
   try {
@@ -35,7 +43,7 @@ export const callGeminiApi = async (systemInstruction: string, userQuery: string
   } catch (error) {
     console.error("Gemini API call failed:", error);
     if (error instanceof Error) {
-        if (error.message.includes('API key not valid')) {
+        if (error.message.includes('API key not valid') || error.message.includes('API Key must be set')) {
             return "Error: The provided API key is not valid. Please check your configuration.";
         }
     }

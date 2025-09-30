@@ -128,10 +128,35 @@ OUTPUT REQUIREMENTS:
 ## Environment Variables
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `GEMINI_API_KEY` | Yes | Auth for Google Gemini API |
-| `GEMINI_MODEL` | No | Override model (defaults in code) |
+| `VITE_GEMINI_API_KEY` | Yes | Auth for Google Gemini API (production builds) |
+| `GEMINI_API_KEY` | Yes | Auth for Google Gemini API (development) |
+
+**Important for Production:** Use `VITE_GEMINI_API_KEY` for production deployments since Vite only exposes variables prefixed with `VITE_` to the client-side code.
 
 Never commit real keys. Use `.env.local` which is git‑ignored.
+
+## Deployment
+### Production Build
+```bash
+# Set environment variable
+export VITE_GEMINI_API_KEY=your_api_key_here
+# Or create .env.local with VITE_GEMINI_API_KEY=your_key
+
+# Build for production
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+### Deploy to Static Hosting
+The `dist/` folder contains the production build. Deploy to:
+- **Vercel**: `vercel --prod` (set `VITE_GEMINI_API_KEY` in project settings)
+- **Netlify**: Drag `dist/` folder or connect Git repo (set env var in site settings)
+- **GitHub Pages**: Use GitHub Actions with environment secrets
+- **Firebase Hosting**: `firebase deploy` after `npm run build`
+
+⚠️ **Security Note**: Since this runs client-side, the API key will be visible to users. For production apps, consider a backend proxy to hide the key.
 
 ## Architecture
 High-level flow:

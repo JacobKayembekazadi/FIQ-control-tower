@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Bridge existing FIQ design token utilities to Tailwind (optional custom layer) */
+@layer components {
+  .fiq-container { @apply container mx-auto px-4; }
+}
