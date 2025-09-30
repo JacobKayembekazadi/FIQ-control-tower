@@ -277,12 +277,7 @@ export const FloatingAiChat: React.FC<FloatingAiChatProps> = ({ data, isDataLoad
                                         </p>
                                     </div>
 
-                                                                                                            {!aiReady && (
-                                                                                                                <div className="w-full max-w-3xl mx-auto mb-8 bg-gray-800 border border-red-500/40 rounded-xl p-6">
-                                                                                                                    <h3 className="text-lg font-semibold text-red-400 mb-2">AI Disabled</h3>
-                                                                                                                    <p className="text-gray-300 text-sm">Set <code className="font-mono">VITE_GEMINI_API_KEY</code> or <code className="font-mono">GEMINI_API_KEY</code> in your environment and rebuild to enable AI features.</p>
-                                                                                                                </div>
-                                                                                                            )}
+                                                                                                                                                {/* AI disabled banner removed to avoid UX annoyance */}
 
                                     {/* Quick Suggestions */}
                                     {isDataLoaded && (

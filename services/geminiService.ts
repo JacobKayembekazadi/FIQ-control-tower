@@ -11,40 +11,36 @@ function resolveApiKey(): string | null {
 
 let ai: GoogleGenAI | null = null;
 
-function initClient() {
+function ensureClient(): GoogleGenAI | null {
+  const existing = ai;
   const key = resolveApiKey();
-  if (!key) {
-    ai = null;
-    return;
-  }
+  if (existing && key) return existing;
+  if (!key) return null;
   try {
     ai = new GoogleGenAI({ apiKey: key });
+    return ai;
   } catch (err) {
     console.error('Failed to initialize Google GenAI client', err);
     ai = null;
+    return null;
   }
 }
 
-initClient();
-
-export function isAiEnabled(): boolean {
-  return !!ai && !!resolveApiKey();
-}
+export function isAiEnabled(): boolean { return !!ensureClient(); }
 
 // Stub exports kept for compatibility with UI (no-op now)
-export function getActiveApiKeySource(): 'build' | 'none' {
-  return resolveApiKey() ? 'build' : 'none';
-}
+export function getActiveApiKeySource(): 'build' | 'none' { return resolveApiKey() ? 'build' : 'none'; }
 export function setRuntimeApiKey(): { success: boolean; message: string } { return { success: false, message: 'Runtime key entry disabled.' }; }
 export function clearRuntimeApiKey() { /* noop */ }
 
 export const callGeminiApi = async (systemInstruction: string, userQuery: string): Promise<string> => {
-  if (!isAiEnabled()) {
+  const client = ensureClient();
+  if (!client) {
     return Promise.resolve("AI functionality is disabled. API key is missing or invalid.");
   }
   
   try {
-    const response = await ai!.models.generateContent({
+  const response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: [
         { role: 'user', parts: [{ text: `SYSTEM INSTRUCTION:\n${systemInstruction}` }] },
