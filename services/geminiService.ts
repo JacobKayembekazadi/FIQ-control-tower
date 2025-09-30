@@ -2,31 +2,11 @@
 import { GoogleGenAI } from "@google/genai";
 import { processDataForDashboard } from "../utils/dataProcessor";
 
-// --- API KEY HANDLING -------------------------------------------------------
-// We support three sources (in priority order):
-// 1. Runtime override stored in localStorage (user-entered in UI)
-// 2. Vite-exposed environment variable (build time) VITE_GEMINI_API_KEY
-// 3. Legacy process.env / window shim (development fallbacks)
-
-const LOCAL_STORAGE_KEY = 'fiq_gemini_api_key';
-
-function readLocalStorageKey(): string | null {
-  try {
-    return typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
-  } catch {
-    return null;
-  }
-}
-
-let runtimeApiKey: string | null = readLocalStorageKey();
-
-const buildTimeKey = (import.meta as any).env?.VITE_GEMINI_API_KEY ||
-  (globalThis as any).process?.env?.VITE_GEMINI_API_KEY ||
-  (globalThis as any).process?.env?.GEMINI_API_KEY ||
-  (window as any).VITE_GEMINI_API_KEY;
-
+// --- API KEY HANDLING (Simplified) ------------------------------------------
+// Use either VITE_GEMINI_API_KEY or GEMINI_API_KEY (both exposed via vite.config.ts)
 function resolveApiKey(): string | null {
-  return runtimeApiKey || buildTimeKey || null;
+  const im = (import.meta as any).env || {};
+  return im.VITE_GEMINI_API_KEY || im.GEMINI_API_KEY || (globalThis as any).process?.env?.GEMINI_API_KEY || null;
 }
 
 let ai: GoogleGenAI | null = null;
@@ -51,37 +31,12 @@ export function isAiEnabled(): boolean {
   return !!ai && !!resolveApiKey();
 }
 
-export function getActiveApiKeySource(): 'runtime' | 'build' | 'none' {
-  if (runtimeApiKey) return 'runtime';
-  if (buildTimeKey) return 'build';
-  return 'none';
+// Stub exports kept for compatibility with UI (no-op now)
+export function getActiveApiKeySource(): 'build' | 'none' {
+  return resolveApiKey() ? 'build' : 'none';
 }
-
-export function setRuntimeApiKey(key: string): { success: boolean; message: string } {
-  if (!key || key.trim().length < 10) {
-    return { success: false, message: 'API key appears invalid (too short).' };
-  }
-  try {
-    runtimeApiKey = key.trim();
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(LOCAL_STORAGE_KEY, runtimeApiKey);
-    }
-    initClient();
-    if (!ai) {
-      return { success: false, message: 'Failed to initialize AI client with provided key.' };
-    }
-    return { success: true, message: 'API key saved for this browser.' };
-  } catch (e) {
-    console.error('Failed to set runtime API key', e);
-    return { success: false, message: 'Unexpected error storing key.' };
-  }
-}
-
-export function clearRuntimeApiKey() {
-  runtimeApiKey = null;
-  try { if (typeof window !== 'undefined') localStorage.removeItem(LOCAL_STORAGE_KEY); } catch {}
-  initClient();
-}
+export function setRuntimeApiKey(): { success: boolean; message: string } { return { success: false, message: 'Runtime key entry disabled.' }; }
+export function clearRuntimeApiKey() { /* noop */ }
 
 export const callGeminiApi = async (systemInstruction: string, userQuery: string): Promise<string> => {
   if (!isAiEnabled()) {

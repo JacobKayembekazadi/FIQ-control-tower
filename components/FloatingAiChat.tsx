@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { LoadingSpinner } from './icons/LoadingSpinner';
-import { geminiService, isAiEnabled, setRuntimeApiKey, getActiveApiKeySource, clearRuntimeApiKey } from '../services/geminiService';
+import { geminiService, isAiEnabled } from '../services/geminiService';
 import Papa from 'papaparse';
 
 interface Message {
@@ -56,9 +56,7 @@ export const FloatingAiChat: React.FC<FloatingAiChatProps> = ({ data, isDataLoad
     const [query, setQuery] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [apiKeyInput, setApiKeyInput] = useState('');
-    const [apiKeyStatus, setApiKeyStatus] = useState<string | null>(null);
-    const [aiReady, setAiReady] = useState(isAiEnabled());
+    const [aiReady] = useState(isAiEnabled());
     
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -134,21 +132,7 @@ export const FloatingAiChat: React.FC<FloatingAiChatProps> = ({ data, isDataLoad
         }
     };
 
-    const handleApiKeySave = () => {
-        const result = setRuntimeApiKey(apiKeyInput.trim());
-        setApiKeyStatus(result.message);
-        setAiReady(isAiEnabled());
-        if (result.success) {
-            setTimeout(() => setApiKeyStatus(null), 3000);
-        }
-    };
-
-    const handleApiKeyClear = () => {
-        clearRuntimeApiKey();
-        setAiReady(isAiEnabled());
-        setApiKeyStatus('Runtime API key cleared.');
-        setTimeout(() => setApiKeyStatus(null), 3000);
-    };
+    // Runtime API key entry removed; relies on build-time env now.
 
     const clearChat = () => {
         setMessages([]);
@@ -293,35 +277,12 @@ export const FloatingAiChat: React.FC<FloatingAiChatProps> = ({ data, isDataLoad
                                         </p>
                                     </div>
 
-                                                                        {!aiReady && (
-                                                                            <div className="w-full max-w-3xl mx-auto mb-8 bg-gray-800 border border-red-500/40 rounded-xl p-6">
-                                                                                <h3 className="text-xl font-semibold text-red-400 mb-2 flex items-center gap-2">
-                                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 5c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z"/></svg>
-                                                                                    AI Disabled – Provide Gemini API Key
-                                                                                </h3>
-                                                                                <p className="text-gray-300 text-sm mb-4">Enter a valid Gemini API key to enable AI features in this browser session. The key is stored locally (localStorage) and never sent anywhere except directly to the Gemini API.</p>
-                                                                                <div className="flex flex-col md:flex-row gap-3">
-                                                                                    <input
-                                                                                        type="password"
-                                                                                        placeholder="sk-..."
-                                                                                        value={apiKeyInput}
-                                                                                        onChange={e => setApiKeyInput(e.target.value)}
-                                                                                        className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                                                    />
-                                                                                    <button
-                                                                                        onClick={handleApiKeySave}
-                                                                                        disabled={!apiKeyInput.trim()}
-                                                                                        className="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 disabled:from-gray-600 disabled:to-gray-600 text-white text-sm font-medium shadow hover:shadow-lg transition-all"
-                                                                                    >Save Key</button>
-                                                                                    <button
-                                                                                        onClick={handleApiKeyClear}
-                                                                                        className="px-6 py-3 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 text-sm font-medium border border-gray-600"
-                                                                                    >Clear</button>
-                                                                                </div>
-                                                                                {apiKeyStatus && <p className="mt-3 text-xs text-gray-400">{apiKeyStatus}</p>}
-                                                                                <p className="mt-4 text-xs text-gray-500">Source status: <span className="font-mono">{getActiveApiKeySource()}</span></p>
-                                                                            </div>
-                                                                        )}
+                                                                                                            {!aiReady && (
+                                                                                                                <div className="w-full max-w-3xl mx-auto mb-8 bg-gray-800 border border-red-500/40 rounded-xl p-6">
+                                                                                                                    <h3 className="text-lg font-semibold text-red-400 mb-2">AI Disabled</h3>
+                                                                                                                    <p className="text-gray-300 text-sm">Set <code className="font-mono">VITE_GEMINI_API_KEY</code> or <code className="font-mono">GEMINI_API_KEY</code> in your environment and rebuild to enable AI features.</p>
+                                                                                                                </div>
+                                                                                                            )}
 
                                     {/* Quick Suggestions */}
                                     {isDataLoaded && (
