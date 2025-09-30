@@ -1,6 +1,5 @@
 
 import React, { useRef } from 'react';
-import { LogoIcon } from './icons/LogoIcon';
 
 interface HeaderProps {
     onFileUpload: (file: File) => void;
@@ -26,31 +25,31 @@ export const Header: React.FC<HeaderProps> = ({ onFileUpload, onReset, isDataLoa
     }
 
     return (
-        <header className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-wrap items-center justify-between">
-            <div className="flex items-center space-x-3">
-                <LogoIcon className="h-10 w-10 text-indigo-600" />
+        <header className="fiq-header">
+            <div className="fiq-header-logo-section">
+                <img 
+                    src="/images/FIQ-logo.webp" 
+                    alt="FIQ Logo" 
+                    className="h-20 w-20 object-contain"
+                />
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">FIQ Control Tower</h1>
-                    <p className="text-sm text-gray-500">Bespoke Solutions for Supply Chain Innovators</p>
+                    <h1 className="fiq-header-title">FIQ Control Tower</h1>
+                    <p className="fiq-header-subtitle">Bespoke Solutions for Supply Chain Innovators</p>
                 </div>
             </div>
-            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+            <div className="fiq-header-actions">
                  <input 
                     type="file" 
                     ref={fileInputRef}
                     onChange={handleFileChange} 
                     accept=".csv" 
-                    className="block w-full text-sm text-gray-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-indigo-50 file:text-indigo-700
-                        hover:file:bg-indigo-100 cursor-pointer"
+                    className="fiq-file-input"
+                    title="Upload CSV file"
                 />
                 {isDataLoaded && (
                     <button 
                         onClick={handleReset} 
-                        className="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-200"
+                        className="fiq-button-reset"
                     >
                         Reset
                     </button>

@@ -1,0 +1,406 @@
+/* FIQ Quantify Design System - CSS Variables */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+:root {
+  /* Primary Colors */
+  --color-primary-orange: #FF8C00;
+  --color-primary-dark-grey: #1A1A1A;
+  
+  /* Secondary Colors */
+  --color-secondary-light-grey: #F0F0F0;
+  --color-secondary-medium-grey: #666666;
+  --color-secondary-accent-teal: #00BFFF;
+  --color-secondary-accent-red: #DC143C;
+  
+  /* Text Colors */
+  --color-text-default: #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-inverted: #FFFFFF;
+  --color-text-link: #FF8C00;
+  
+  /* Typography */
+  --font-family-heading: 'Montserrat', sans-serif;
+  --font-family-body: 'Open Sans', sans-serif;
+  
+  --font-size-h1: 48px;
+  --font-size-h2: 36px;
+  --font-size-h3: 28px;
+  --font-size-body-large: 18px;
+  --font-size-body-regular: 16px;
+  --font-size-small: 14px;
+  
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-heading: 1.2;
+  --line-height-body: 1.5;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Borders */
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-width-default: 1px;
+  --border-color-default: #E0E0E0;
+  --border-color-focus: #FF8C00;
+  
+  /* Shadows */
+  --shadow-default: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  
+  /* Component Variables */
+  --button-primary-bg: var(--color-primary-orange);
+  --button-primary-text: var(--color-text-inverted);
+  --button-primary-hover-bg: #E67C00;
+  --button-primary-active-bg: #CC6E00;
+  
+  --button-secondary-bg: transparent;
+  --button-secondary-border: var(--color-primary-dark-grey);
+  --button-secondary-text: var(--color-primary-dark-grey);
+  --button-secondary-hover-bg: var(--color-secondary-light-grey);
+  
+  --input-border: var(--border-color-default);
+  --input-focus-border: var(--border-color-focus);
+  --input-text: var(--color-text-default);
+  --input-placeholder: var(--color-secondary-medium-grey);
+}
+
+/* Base Typography Classes */
+.fiq-heading {
+  font-family: var(--font-family-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-default);
+}
+
+.fiq-body {
+  font-family: var(--font-family-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text-default);
+}
+
+.fiq-h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+}
+
+.fiq-h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+}
+
+.fiq-h3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+}
+
+.fiq-body-large {
+  font-size: var(--font-size-body-large);
+  font-weight: var(--font-weight-regular);
+}
+
+.fiq-body-regular {
+  font-size: var(--font-size-body-regular);
+  font-weight: var(--font-weight-regular);
+}
+
+.fiq-small {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Component Classes */
+.fiq-button-primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-radius: var(--border-radius-small);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-semibold);
+  transition: background-color 0.2s ease;
+}
+
+.fiq-button-primary:hover {
+  background-color: var(--button-primary-hover-bg);
+}
+
+.fiq-button-primary:active {
+  background-color: var(--button-primary-active-bg);
+}
+
+.fiq-button-secondary {
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  border: var(--border-width-default) solid var(--button-secondary-border);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-semibold);
+  transition: background-color 0.2s ease;
+}
+
+.fiq-button-secondary:hover {
+  background-color: var(--button-secondary-hover-bg);
+}
+
+.fiq-input {
+  border: var(--border-width-default) solid var(--input-border);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-family-body);
+  color: var(--input-text);
+  transition: border-color 0.2s ease;
+}
+
+.fiq-input:focus {
+  outline: none;
+  border-color: var(--input-focus-border);
+}
+
+.fiq-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+/* Card Styles */
+.fiq-card {
+  background-color: var(--color-text-inverted);
+  border-radius: var(--border-radius-medium);
+  box-shadow: var(--shadow-default);
+  padding: var(--spacing-lg);
+}
+
+.fiq-kpi-card {
+  background-color: var(--color-text-inverted);
+  border-radius: var(--border-radius-medium);
+  box-shadow: var(--shadow-default);
+  padding: var(--spacing-lg);
+  text-align: center;
+  border-left: 4px solid var(--color-primary-orange);
+  transition: all 0.3s ease-in-out;
+}
+
+.fiq-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.fiq-kpi-title {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body-regular);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fiq-kpi-value {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-orange);
+  margin-top: var(--spacing-sm);
+}
+
+/* Header Styles */
+.fiq-header {
+  background-color: var(--color-text-inverted);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-medium);
+  box-shadow: var(--shadow-default);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fiq-header-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-default);
+  margin: 0;
+}
+
+.fiq-header-subtitle {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.fiq-header-logo-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.fiq-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .fiq-header-actions {
+    margin-top: 0;
+  }
+}
+
+.fiq-file-input {
+  display: block;
+  width: 100%;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.fiq-file-input::-webkit-file-upload-button {
+  margin-right: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 20px;
+  border: none;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  background-color: var(--color-secondary-light-grey);
+  color: var(--color-primary-orange);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.fiq-file-input::-webkit-file-upload-button:hover {
+  background-color: #E8E8E8;
+}
+
+.fiq-button-reset {
+  background-color: var(--color-secondary-accent-red);
+  color: var(--color-text-inverted);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-medium);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.fiq-button-reset:hover {
+  background-color: #C41E3A;
+}
+
+/* Chat Component Styles */
+.fiq-chat-button {
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-text-inverted);
+  border: 2px solid var(--color-primary-orange);
+  border-radius: 50%;
+  box-shadow: 0px 4px 12px rgba(255, 140, 0, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fiq-chat-button:hover {
+  background-color: var(--color-secondary-light-grey);
+  transform: scale(1.1);
+  box-shadow: 0px 6px 20px rgba(255, 140, 0, 0.4);
+}
+
+.fiq-chat-modal {
+  background: linear-gradient(135deg, var(--color-primary-dark-grey) 0%, #2A2A2A 100%);
+  border-radius: var(--border-radius-medium);
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid #333333;
+}
+
+.fiq-chat-header {
+  background: linear-gradient(90deg, var(--color-primary-dark-grey) 0%, #2A2A2A 100%);
+  border-bottom: 1px solid #333333;
+  padding: var(--spacing-lg);
+}
+
+.fiq-chat-logo-container {
+  width: 48px;
+  height: 48px;
+  background-color: var(--color-text-inverted);
+  border-radius: var(--border-radius-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-default);
+}
+
+.fiq-chat-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-inverted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.fiq-chat-subtitle {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-small);
+  color: #CCCCCC;
+}
+
+.fiq-feature-card {
+  background: linear-gradient(135deg, var(--color-primary-orange) 0%, #E67C00 100%);
+  border-radius: var(--border-radius-medium);
+  padding: var(--spacing-lg);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(255, 140, 0, 0.2);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fiq-feature-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 8px 20px rgba(255, 140, 0, 0.3);
+}
+
+.fiq-feature-card.teal {
+  background: linear-gradient(135deg, var(--color-secondary-accent-teal) 0%, #0099CC 100%);
+}
+
+.fiq-feature-card.red {
+  background: linear-gradient(135deg, var(--color-secondary-accent-red) 0%, #B91C3C 100%);
+}
+
+.fiq-feature-card.dark {
+  background: linear-gradient(135deg, var(--color-primary-dark-grey) 0%, #333333 100%);
+}
+
+/* Utility Classes */
+.fiq-text-primary {
+  color: var(--color-primary-orange);
+}
+
+.fiq-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.fiq-bg-primary {
+  background-color: var(--color-primary-orange);
+}
+
+.fiq-bg-dark {
+  background-color: var(--color-primary-dark-grey);
+}
+
+.fiq-bg-light {
+  background-color: var(--color-secondary-light-grey);
+}

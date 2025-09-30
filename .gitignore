@@ -12,6 +12,32 @@ dist
 dist-ssr
 *.local
 
+# Build / tooling artifacts
+build
+.vite
+.cache
+*.tsbuildinfo
+coverage
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Package managers / stores
+.pnpm-store
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Turborepo / monorepo
+.turbo
+
+# OS files
+Thumbs.db
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +48,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temp directories
+tmp
+temp

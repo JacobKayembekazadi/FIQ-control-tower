@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Papa from 'papaparse';
 import { Header } from './components/Header';
 import { KpiCard } from './components/KpiCard';
-import { AiAnalyst } from './components/AiAnalyst';
+import { FloatingAiChat } from './components/FloatingAiChat';
 import { ProactiveAlerts } from './components/ProactiveAlerts';
 import { OrdersTable } from './components/OrdersTable';
 import { DataMappingModal } from './components/DataMappingModal';
@@ -106,9 +106,6 @@ const App: React.FC = () => {
                 )}
 
                 <main className="space-y-6">
-                    <ProactiveAlerts data={originalData} isDataLoaded={isDataLoaded} />
-                    <AiAnalyst data={originalData} isDataLoaded={isDataLoaded} />
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <KpiCard title="Order Fill Rate" value={`${kpis.fillRate.toFixed(1)}%`} />
                         <KpiCard title="Avg. Order Cycle (Days)" value={kpis.cycleTime.toString()} />
@@ -123,9 +120,14 @@ const App: React.FC = () => {
 
                     <DashboardChart title="Order Volume Over Time" type="line" data={volumeChartData} dataKey="orders" />
                     
+                    <ProactiveAlerts data={originalData} isDataLoaded={isDataLoaded} />
+                    
                     <OrdersTable orders={filteredOrders} />
                 </main>
             </div>
+
+            {/* Floating AI Chat - Available everywhere */}
+            <FloatingAiChat data={originalData} isDataLoaded={isDataLoaded} />
             {isMappingModalOpen && (
                 <DataMappingModal
                     isOpen={isMappingModalOpen}

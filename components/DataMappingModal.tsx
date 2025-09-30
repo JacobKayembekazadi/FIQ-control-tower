@@ -26,7 +26,8 @@ export const DataMappingModal: React.FC<DataMappingModalProps> = ({ isOpen, onCl
         const initialMapping: Mapping = {};
         for (const key in REQUIRED_FIELDS) {
             const fieldKey = key as keyof DataRow;
-            const likelyMatch = headers.find(h => h.toLowerCase().replace(/[\s_]/g, '') === fieldKey.toLowerCase().replace(/[\s_]/g, ''));
+            const fieldKeyStr = String(fieldKey);
+            const likelyMatch = headers.find(h => h.toLowerCase().replace(/[\s_]/g, '') === fieldKeyStr.toLowerCase().replace(/[\s_]/g, ''));
             if (likelyMatch) {
                 initialMapping[fieldKey] = likelyMatch;
             }
@@ -66,25 +67,28 @@ export const DataMappingModal: React.FC<DataMappingModalProps> = ({ isOpen, onCl
             return;
         }
         
-        const mappedData = data.map(row => {
-            const newRow: any = {};
-             for (const key in mapping) {
+        // Build final mapped records while preserving ALL original columns so AI can access full dataset
+        const mappedData = data.map(originalRow => {
+            // Start with full original row (raw keys preserved)
+            const newRow: any = { ...originalRow };
+            // Overlay standardized dashboard fields based on user mapping
+            for (const key in mapping) {
                 const dataKey = key as keyof DataRow;
-                if (mapping[dataKey]) {
-                    newRow[dataKey] = row[mapping[dataKey]!];
+                const sourceHeader = mapping[dataKey];
+                if (sourceHeader) {
+                    newRow[dataKey] = originalRow[sourceHeader];
                 }
             }
+            // Normalize & parse typed fields (leave raw originals untouched under their original header names)
+            newRow.quantity = parseInt(newRow.quantity, 10) || 0;
+            newRow.order_date = parseDate(newRow.order_date);
+            newRow.ship_date = parseDate(newRow.ship_date);
+            newRow.delivery_date = parseDate(newRow.delivery_date);
+            newRow.required_shipping_date = parseDate(newRow.required_shipping_date);
             return newRow;
-        }).map(row => ({
-            ...row,
-            quantity: parseInt(row.quantity, 10) || 0,
-            order_date: parseDate(row.order_date),
-            ship_date: parseDate(row.ship_date),
-            delivery_date: parseDate(row.delivery_date),
-            required_shipping_date: parseDate(row.required_shipping_date),
-        }));
+        });
 
-        onConfirm(mappedData as any);
+        onConfirm(mappedData as any); // mappedData now contains full original + standardized fields
     };
     
     if (!isOpen) return null;
@@ -111,6 +115,8 @@ export const DataMappingModal: React.FC<DataMappingModalProps> = ({ isOpen, onCl
                                         {description.replace(' (Optional)', '')} {optional ? <span className="text-xs text-gray-400">(Optional)</span> : <span className="text-red-500">*</span>}
                                     </label>
                                     <select
+                                        title={`Map source column to ${description}`}
+                                        aria-label={`Select source column for ${description}`}
                                         value={mapping[fieldKey] || ''}
                                         onChange={(e) => handleMappingChange(fieldKey, e.target.value)}
                                         className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
