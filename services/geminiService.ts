@@ -180,3 +180,15 @@ export const geminiService = {
     }
   }
 };
+
+// Debug helper (non-sensitive): allows you to verify the key is loaded without printing it fully.
+// In the browser console run: window.__fiqGeminiKeyInfo()
+if (typeof window !== 'undefined') {
+  (window as any).__fiqGeminiKeyInfo = () => {
+    const key = resolveApiKey();
+    if (!key) return 'NO_KEY_DETECTED';
+    return `${key.slice(0,6)}...${key.slice(-4)} (length:${key.length})`;
+  };
+  // One-time masked log
+  try { console.info('[FIQ Gemini] Key status:', (window as any).__fiqGeminiKeyInfo()); } catch {}
+}
