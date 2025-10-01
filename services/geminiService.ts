@@ -6,7 +6,23 @@ import { processDataForDashboard } from "../utils/dataProcessor";
 // Use either VITE_GEMINI_API_KEY or GEMINI_API_KEY (both exposed via vite.config.ts)
 function resolveApiKey(): string | null {
   const im = (import.meta as any).env || {};
-  return im.VITE_GEMINI_API_KEY || im.GEMINI_API_KEY || (globalThis as any).process?.env?.GEMINI_API_KEY || null;
+  const fromEnv = im.VITE_GEMINI_API_KEY || im.GEMINI_API_KEY || (globalThis as any).process?.env?.GEMINI_API_KEY;
+  if (fromEnv) return fromEnv;
+  // Window global fallback (can be injected by a small inline script in index.html at deploy time)
+  try {
+    if (typeof window !== 'undefined' && (window as any).__FIQ_GEMINI_KEY) {
+      return (window as any).__FIQ_GEMINI_KEY;
+    }
+  } catch {}
+  // Meta tag fallback <meta name="fiq-gemini-key" content="YOUR_KEY" />
+  try {
+    if (typeof document !== 'undefined') {
+      const meta = document.querySelector('meta[name="fiq-gemini-key"]');
+      const val = meta?.getAttribute('content');
+      if (val) return val;
+    }
+  } catch {}
+  return null;
 }
 
 let ai: GoogleGenAI | null = null;
