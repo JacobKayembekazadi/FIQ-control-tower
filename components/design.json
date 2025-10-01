@@ -1,0 +1,97 @@
+{
+  "name": "Quantify Design System",
+  "version": "1.0.0",
+  "colors": {
+    "primary": {
+      "orange": "#FF8C00",
+      "darkGrey": "#1A1A1A"
+    },
+    "secondary": {
+      "lightGrey": "#F0F0F0",
+      "mediumGrey": "#666666",
+      "accentTeal": "#00BFFF",
+      "accentRed": "#DC143C"
+    },
+    "text": {
+      "default": "#1A1A1A",
+      "secondary": "#666666",
+      "inverted": "#FFFFFF",
+      "link": "#FF8C00"
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "heading": "Montserrat, sans-serif",
+      "body": "Open Sans, sans-serif"
+    },
+    "fontSizes": {
+      "h1": "48px",
+      "h2": "36px",
+      "h3": "28px",
+      "bodyLarge": "18px",
+      "bodyRegular": "16px",
+      "small": "14px"
+    },
+    "fontWeights": {
+      "regular": 400,
+      "semiBold": 600,
+      "bold": 700
+    },
+    "lineHeights": {
+      "heading": 1.2,
+      "body": 1.5
+    }
+  },
+  "spacing": {
+    "base": "8px",
+    "scale": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "xxl": "48px"
+    }
+  },
+  "borders": {
+    "radius": {
+      "small": "4px",
+      "medium": "8px"
+    },
+    "width": {
+      "default": "1px"
+    },
+    "color": {
+      "default": "#E0E0E0",
+      "focus": "#FF8C00"
+    }
+  },
+  "shadows": {
+    "default": "0px 2px 4px rgba(0, 0, 0, 0.1)"
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "backgroundColor": "{colors.primary.orange}",
+        "textColor": "{colors.text.inverted}",
+        "hoverBackgroundColor": "#E67C00",
+        "activeBackgroundColor": "#CC6E00",
+        "borderRadius": "{borders.radius.small}"
+      },
+      "secondary": {
+        "backgroundColor": "transparent",
+        "borderColor": "{colors.primary.darkGrey}",
+        "textColor": "{colors.primary.darkGrey}",
+        "hoverBackgroundColor": "{colors.secondary.lightGrey}",
+        "borderRadius": "{borders.radius.small}"
+      }
+    },
+    "input": {
+      "borderColor": "{borders.color.default}",
+      "focusBorderColor": "{borders.color.focus}",
+      "textColor": "{colors.text.default}",
+      "placeholderColor": "{colors.secondary.mediumGrey}",
+      "borderRadius": "{borders.radius.small}"
+    }
+  }
+}
