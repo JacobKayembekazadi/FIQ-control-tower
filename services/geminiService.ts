@@ -2,6 +2,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { processDataForDashboard } from "../utils/dataProcessor";
 
+// Flag to force proxy usage even if a client key exists
+const FORCE_PROXY = (import.meta as any)?.env?.VITE_GEMINI_USE_PROXY === 'true';
+
 // --- API KEY HANDLING (Simplified) ------------------------------------------
 // Use either VITE_GEMINI_API_KEY or GEMINI_API_KEY (both exposed via vite.config.ts)
 function resolveApiKey(): string | null {
@@ -30,6 +33,7 @@ let ai: GoogleGenAI | null = null;
 function ensureClient(): GoogleGenAI | null {
   const existing = ai;
   const key = resolveApiKey();
+  if (FORCE_PROXY) return null; // bypass direct client
   if (existing && key) return existing;
   if (!key) return null;
   try {
@@ -42,7 +46,7 @@ function ensureClient(): GoogleGenAI | null {
   }
 }
 
-export function isAiEnabled(): boolean { return !!ensureClient(); }
+export function isAiEnabled(): boolean { return !!ensureClient() || FORCE_PROXY; }
 
 // Stub exports kept for compatibility with UI (no-op now)
 export function getActiveApiKeySource(): 'build' | 'none' { return resolveApiKey() ? 'build' : 'none'; }
@@ -51,33 +55,44 @@ export function clearRuntimeApiKey() { /* noop */ }
 
 export const callGeminiApi = async (systemInstruction: string, userQuery: string): Promise<string> => {
   const client = ensureClient();
+  // If no client (no key in bundle) or forced proxy, use serverless function
   if (!client) {
-    return Promise.resolve("AI functionality is disabled. API key is missing or invalid.");
+    try {
+      const resp = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ systemInstruction, userContent: userQuery })
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        return json?.error ? `Proxy error: ${json.error}` : 'AI proxy request failed.';
+      }
+      return json.text || 'Empty AI response via proxy.';
+    } catch (e) {
+      console.error('Proxy call failed', e);
+      return 'AI proxy unreachable.';
+    }
   }
-  
+
   try {
-  const response = await client.models.generateContent({
+    const response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: [
         { role: 'user', parts: [{ text: `SYSTEM INSTRUCTION:\n${systemInstruction}` }] },
         { role: 'user', parts: [{ text: userQuery }] }
       ]
     });
-
     const text = response.text;
-    if (text) {
-      return text;
-    } else {
-      throw new Error("Invalid API response structure or empty response.");
-    }
+    if (text) return text;
+    throw new Error('Invalid API response structure or empty response.');
   } catch (error) {
-    console.error("Gemini API call failed:", error);
+    console.error('Gemini API call failed:', error);
     if (error instanceof Error) {
-        if (error.message.includes('API key not valid') || error.message.includes('API Key must be set')) {
-            return "Error: The provided API key is not valid. Please check your configuration.";
-        }
+      if (error.message.includes('API key not valid') || error.message.includes('API Key must be set')) {
+        return 'Error: The provided API key is not valid. Please check your configuration.';
+      }
     }
-    return "An error occurred while communicating with the AI. Please try again later.";
+    return 'An error occurred while communicating with the AI. Please try again later.';
   }
 };
 
